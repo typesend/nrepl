@@ -8,7 +8,7 @@ defmodule NRepl.Application do
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: NRepl.Worker.start_link(arg)
-      # {NRepl.Worker, arg}
+      {NRepl.Worker, %{host: '127.0.0.1', port: 62592}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

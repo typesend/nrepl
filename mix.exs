@@ -27,7 +27,8 @@ defmodule NRepl.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:bento, "~> 0.9.2"}
+      {:bento, "~> 0.9.2"},
+      {:elixir_uuid, "~> 1.2"}
     ]
   end
 
