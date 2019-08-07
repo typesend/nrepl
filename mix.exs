@@ -7,7 +7,11 @@ defmodule NRepl.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      package: package(),
+      description: "An Elixir nREPL client.",
+      deps: deps(),
+      source_url: url,
+      homepage_url: url
     ]
   end
 
@@ -24,5 +28,17 @@ defmodule NRepl.MixProject do
     [
       {:bento, "~> 0.9.2"}
     ]
+  end
+
+  defp package do
+    [
+      name: "nrepl",
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => url},
+    ]
+  end
+
+  defp url do
+    "https://github.com/typesend/nrepl"
   end
 end
