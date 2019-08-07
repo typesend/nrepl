@@ -10,8 +10,8 @@ defmodule NRepl.MixProject do
       package: package(),
       description: "An Elixir nREPL client.",
       deps: deps(),
-      source_url: url,
-      homepage_url: url
+      source_url: url(),
+      homepage_url: url()
     ]
   end
 
@@ -26,6 +26,7 @@ defmodule NRepl.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:bento, "~> 0.9.2"}
     ]
   end
@@ -34,7 +35,7 @@ defmodule NRepl.MixProject do
     [
       name: "nrepl",
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => url},
+      links: %{"GitHub" => url()},
     ]
   end
 
