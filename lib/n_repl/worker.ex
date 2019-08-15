@@ -1,6 +1,8 @@
 defmodule NRepl.Worker do
   use Connection
   import Bento
+  import UUID
+
   @default_url "nrepl://127.0.0.1:7700"
   @initial_state %{socket: nil}
 
@@ -22,10 +24,11 @@ defmodule NRepl.Worker do
     Connection.call(nrepl_pid, :close)
   end
 
-  def send(nrepl_pid, message), do: Connection.call(nrepl_pid, {:send, message})
+  def send(nrepl_pid, message) do
+    Connection.call(nrepl_pid, {:send, Map.merge(%{id: UUID.uuid4()}, message)})
+  end
 
-  def recv(nrepl_pid, bytes \\ 10000, timeout \\ 3000) do
-    Connection.call(nrepl_pid, {:recv, bytes, timeout})
+  def eval() do
   end
 
   def init(state) do
@@ -33,7 +36,7 @@ defmodule NRepl.Worker do
   end
 
   def connect(_info, state) do
-    opts = [:binary, active: :once]
+    opts = [:binary]
 
     case :gen_tcp.connect('127.0.0.1', 7700, opts) do
       {:ok, socket} ->
@@ -77,6 +80,7 @@ defmodule NRepl.Worker do
 
   def handle_call({:send, message}, _from, %{socket: socket} = state) do
     {:ok, encoded_msg} = Bento.encode(message)
+
     case :gen_tcp.send(socket, encoded_msg) do
       :ok ->
         IO.puts("Sent #{inspect(message)} ::: #{encoded_msg}")
@@ -85,6 +89,12 @@ defmodule NRepl.Worker do
       {:error, _} = error ->
         {:disconnect, error, error, state}
     end
+  end
+
+  def handle_info({:tcp, _port, data}, state) do
+    {:ok, decoded_data} = Bento.decode(data)
+    IO.puts("Received #{inspect(decoded_data)}")
+    {:noreply, state}
   end
 
   def handle_call({:recv, bytes, timeout}, _, %{socket: socket} = state) do
