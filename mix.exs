@@ -27,7 +27,9 @@ defmodule NRepl.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:bento, "~> 0.9.2"},
+      {:poolboy, "~> 1.5"},
+      {:connection, "~> 1.0"},
+      {:bento, "~> 0.9"},
       {:elixir_uuid, "~> 1.2"}
     ]
   end
@@ -36,7 +38,7 @@ defmodule NRepl.MixProject do
     [
       name: "nrepl",
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => url()},
+      links: %{"GitHub" => url()}
     ]
   end
 
