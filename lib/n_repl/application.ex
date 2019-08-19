@@ -16,8 +16,8 @@ defmodule NRepl.Application do
     [
       {:name, {:local, :worker}},
       {:worker_module, NRepl.Worker},
-      {:size, 5},
-      {:max_overflow, 2}
+      {:size, 1},
+      {:max_overflow, 1}
     ]
   end
 end

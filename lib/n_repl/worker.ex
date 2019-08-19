@@ -1,7 +1,7 @@
 defmodule NRepl.Worker do
   use Connection
-  import Bento
-  import UUID
+  alias Bento, as: B
+  import UUID, only: [uuid4: 0]
 
   @default_url "nrepl://127.0.0.1:7700"
   @initial_state %{socket: nil, responses: []}
@@ -80,7 +80,7 @@ defmodule NRepl.Worker do
   end
 
   def handle_call({:send, message}, _from, %{socket: socket} = state) do
-    {:ok, encoded_msg} = Bento.encode(message)
+    {:ok, encoded_msg} = B.encode(message)
 
     case :gen_tcp.send(socket, encoded_msg) do
       :ok ->
@@ -97,7 +97,13 @@ defmodule NRepl.Worker do
   end
 
   def handle_info({:tcp, _port, data}, state) do
-    {:ok, decoded_data} = Bento.decode(data)
+    decoded_data = case B.decode(data) do
+      {:ok, result} -> result
+      {:error, {:invalid, raw}} ->
+        IO.puts "INVALID RESPONSE DATA: #{raw}"
+        {:invalid, raw}
+    end
+    IO.puts "   #{inspect decoded_data}"
     new_state = %{state | responses: state[:responses] ++ [decoded_data]}
     {:noreply, new_state}
   end
@@ -105,7 +111,7 @@ defmodule NRepl.Worker do
   def handle_call({:recv, bytes, timeout}, _, %{socket: socket} = state) do
     case :gen_tcp.recv(socket, bytes, timeout) do
       {:ok, data} ->
-        {:ok, decoded_data} = Bento.decode(data)
+        {:ok, decoded_data} = B.decode(data)
         {:reply, {:ok, decoded_data}, state}
 
       {:error, :timeout} = timeout ->
