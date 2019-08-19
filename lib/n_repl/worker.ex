@@ -4,7 +4,7 @@ defmodule NRepl.Worker do
   import UUID, only: [uuid4: 0]
 
   @default_url "nrepl://127.0.0.1:7700"
-  @initial_state %{socket: nil, responses: []}
+  @initial_state %{socket: nil, responses: [], reply_to: nil}
 
   defp nrepl_server_config do
     [host, port] =
@@ -79,13 +79,12 @@ defmodule NRepl.Worker do
     {:connect, nil, %{state | socket: nil}}
   end
 
-  def handle_call({:send, message}, _from, %{socket: socket} = state) do
+  def handle_call({:send, message}, {from, _ref}, %{socket: socket} = state) do
     {:ok, encoded_msg} = B.encode(message)
 
     case :gen_tcp.send(socket, encoded_msg) do
       :ok ->
-        # IO.puts("Sent #{inspect(message)} ::: #{encoded_msg}")
-        {:reply, :ok, state}
+        {:reply, :ok, %{state | reply_to: from}}
 
       {:error, _} = error ->
         {:disconnect, error, error, state}
@@ -103,8 +102,13 @@ defmodule NRepl.Worker do
         IO.puts "INVALID RESPONSE DATA: #{raw}"
         {:invalid, raw}
     end
-    IO.puts "   #{inspect decoded_data}"
     new_state = %{state | responses: state[:responses] ++ [decoded_data]}
+    case decoded_data do
+      %{"status" => ["done"]} ->
+        Kernel.send(state[:reply_to], new_state[:responses])
+        new_state = %{state | responses: nil, reply_to: nil}
+      _ -> :continue
+    end
     {:noreply, new_state}
   end
 
