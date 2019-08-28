@@ -1,17 +1,19 @@
 defmodule NRepl do
   alias NRepl.Bencode, as: B
 
-  def encode(%{__struct__: mod} = msg) do
+  def encode(%{__struct__: _mod} = msg) do
     # Remove empty session_ids
     msg =
       case msg do
         %{session_id: ""} -> Map.delete(msg, :session_id)
         %{session_id: nil} -> Map.delete(msg, :session_id)
+        _ -> msg
       end
 
     # Bencode the message
     case B.encode(msg) do
       {:ok, encoded_msg} -> encoded_msg
+      {:error, :invalid} -> raise "Invalid message"
     end
   end
 
