@@ -1,7 +1,7 @@
 defmodule NRepl.Bencode do
   import Bento
 
-  @@doc """
+  @doc """
   Bencodes message struct after removing empty keys and normalizing key names.
   """
   def encode(message) do
