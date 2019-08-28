@@ -1,7 +1,7 @@
 defmodule NRepl do
   alias NRepl.Bencode, as: B
 
-  def encode(%{__struct__: _mod} = msg) do
+  def encode(%{__struct__: mod} = msg) do
     # Remove empty session_ids
     msg =
       case msg do
@@ -13,7 +13,7 @@ defmodule NRepl do
     # Bencode the message
     case B.encode(msg) do
       {:ok, encoded_msg} -> encoded_msg
-      {:error, :invalid} -> raise "Invalid message"
+      {:error, :invalid} -> raise "Invalid message. Required fields: #{Enum.join(mod.required, ", ")}"
     end
   end
 
