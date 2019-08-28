@@ -20,10 +20,10 @@ and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/nrepl](https://hexdocs.pm/nrepl).
 
 
-## License
+#### License
 
 Copyright 2019 Ben Damman
-   
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
