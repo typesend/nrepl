@@ -4,6 +4,7 @@ defmodule NRepl.Bencode do
   def encode(message) do
     if NRepl.Message.valid?(message) do
       Map.from_struct(message)
+      |> Enum.reject(fn {k, v} -> v == nil || v == "" end)
       |> Map.new(fn {k, v} -> {String.replace(Atom.to_string(k), "_", "-"), "#{v}"} end)
       |> Bento.encode()
     else

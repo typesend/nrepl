@@ -1,6 +1,6 @@
 defmodule NRepl.Messages.Close do
   import UUID, only: [uuid4: 0]
-  defstruct op: "close", session_id: nil, id: UUID.uuid4()
+  defstruct op: "close", session: nil, id: UUID.uuid4()
 
-  def required(), do: [:session_id]
+  def required(), do: [:session]
 end

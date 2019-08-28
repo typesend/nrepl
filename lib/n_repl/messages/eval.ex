@@ -1,10 +1,9 @@
 defmodule NRepl.Messages.Eval do
   import UUID, only: [uuid4: 0]
-  defstruct op: "eval", code: nil, session_id: nil, id: UUID.uuid4(),
+  defstruct op: "eval", code: nil, session: nil, id: UUID.uuid4(),
     column: nil, # The column number in [file] at which [code] starts.
     eval: nil, # A fully-qualified symbol naming a var whose function value will be used to evaluate [code], instead of clojure.core/eval (the default).
     file: nil, # The path to the file containing [code]. clojure.core/*file* will be bound to this.
-    id: nil, # An opaque message ID that will be included in responses related to the evaluation, and which may be used to restrict the scope of a later "interrupt" operation.
     line: nil, # The line number in [file] at which [code] starts.
     "nrepl.middleware.caught/caught": nil, # A fully-qualified symbol naming a var whose function to use to convey interactive errors. Must point to a function that takes a java.lang.Throwable as its sole argument.
     "nrepl.middleware.caught/print?": nil, # If logical true, the printed value of any interactive errors will be returned in the response (otherwise they will be elided). Delegates to nrepl.middleware.print to perform the printing. Defaults to false.
@@ -15,5 +14,5 @@ defmodule NRepl.Messages.Eval do
     "nrepl.middleware.print/quota": nil, # A hard limit on the number of bytes printed for each value.
     "nrepl.middleware.print/stream?": nil # If logical true, the result of printing each value will be streamed to the client over one or more messages.
 
-  def required(), do: [:code]
+  def required(), do: [:code, :session]
 end

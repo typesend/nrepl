@@ -4,7 +4,7 @@ defmodule NReplTest.Close do
   doctest NRepl.Messages.Close
 
   test "required fields" do
-    assert Close.required == [:session_id]
+    assert Close.required == [:session]
   end
 
   test "id defaults to UUID" do
