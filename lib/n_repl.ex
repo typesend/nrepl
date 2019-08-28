@@ -1,55 +1,21 @@
 defmodule NRepl do
-  @moduledoc """
-  Documentation for NRepl.
-  """
+  alias NRepl.Bencode, as: B
 
-  defp send(message, timeout \\ 350) do
-    :poolboy.transaction(
-      :worker,
-      fn pid -> NRepl.Worker.send(pid, message) end,
-      timeout
-    )
+  def encode(%{__struct__: mod} = msg) do
+    # Remove empty session_ids
+    msg = case msg do
+      %{session_id: ""} -> Map.delete(msg, :session_id)
+      %{session_id: nil} -> Map.delete(msg, :session_id)
+    end
+    # Bencode the message
+    case B.encode(msg) do
+      {:ok, encoded_msg} -> encoded_msg
+    end
   end
 
-  def eval(code_string) do
-    %{op: :eval, code: code_string}
-    |> send()
-  end
-
-  def ls_sessions() do
-    %{op: :"ls-sessions"}
-    |> send()
-  end
-
-  def clone(session_id \\ nil) do
-    %{op: :clone}
-    |> (fn msg -> if(session_id, do: %{msg | session: session_id}, else: msg) end).()
-    |> send()
-  end
-
-  def close(session_id \\ nil) do
-    %{op: :close}
-    |> (fn msg -> if(session_id, do: %{msg | session: session_id}, else: msg) end).()
-    |> send()
-  end
-
-  def describe(verbose \\ true) do
-    %{op: :describe, verbose: verbose}
-    |> send()
-  end
-
-  def interrupt(session_id, msg_id) do
-    %{op: :interrupt, session: session_id, "interrupt-id": msg_id}
-    |> send()
-  end
-
-  def load_file(contents) do
-    %{op: :"load-file", file: contents}
-    |> send()
-  end
-
-  def stdin(content) do
-    %{op: :stdin, stdin: content}
-    |> send()
+  def validate(%{__struct__: mod} = msg) do
+    Map.take(msg, mod.required)
+    |> Map.values
+    |> Enum.all?(fn v -> v != nil && v != "" end)
   end
 end
