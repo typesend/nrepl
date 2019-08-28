@@ -4,7 +4,7 @@ defmodule NReplTest.Interrupt do
   doctest NRepl.Messages.Interrupt
 
   test "required fields" do
-    assert Interrupt.required == [:session]
+    assert Interrupt.required() == [:session]
   end
 
   test "id defaults to UUID" do
@@ -12,5 +12,4 @@ defmodule NReplTest.Interrupt do
     {:ok, info} = UUID.info(message.id)
     assert 4 == info[:version]
   end
-
 end

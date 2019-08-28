@@ -4,7 +4,7 @@ defmodule NReplTest.LsSessions do
   doctest NRepl.Messages.LsSessions
 
   test "required fields" do
-    assert LsSessions.required == []
+    assert LsSessions.required() == []
   end
 
   test "id defaults to UUID" do
@@ -12,5 +12,4 @@ defmodule NReplTest.LsSessions do
     {:ok, info} = UUID.info(message.id)
     assert 4 == info[:version]
   end
-
 end

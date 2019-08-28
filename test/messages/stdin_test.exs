@@ -4,7 +4,7 @@ defmodule NReplTest.Stdin do
   doctest NRepl.Messages.Stdin
 
   test "required fields" do
-    assert Stdin.required == [:stdin]
+    assert Stdin.required() == [:stdin]
   end
 
   test "id defaults to UUID" do
@@ -12,5 +12,4 @@ defmodule NReplTest.Stdin do
     {:ok, info} = UUID.info(message.id)
     assert 4 == info[:version]
   end
-
 end

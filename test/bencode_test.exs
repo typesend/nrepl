@@ -5,7 +5,11 @@ defmodule NReplTest.Bencode do
 
   test "converting underscores to dashes in keys and values to strings" do
     {:ok, encoded_msg} =
-      Bencode.encode(%NRepl.Messages.Interrupt{interrupt_id: 234_234, session: "asdfasdfasdfff4", id: "888"})
+      Bencode.encode(%NRepl.Messages.Interrupt{
+        interrupt_id: 234_234,
+        session: "asdfasdfasdfff4",
+        id: "888"
+      })
 
     assert encoded_msg ==
              "d2:id3:88812:interrupt-id6:2342342:op9:interrupt7:session15:asdfasdfasdfff4e"
@@ -17,7 +21,12 @@ defmodule NReplTest.Bencode do
         "d2:id3:88812:interrupt-id6:2342342:op9:interrupt7:session15:asdfasdfasdfff4e"
       )
 
-    assert data == %{interrupt_id: "234234", op: "interrupt", session: "asdfasdfasdfff4", id: "888"}
+    assert data == %{
+             interrupt_id: "234234",
+             op: "interrupt",
+             session: "asdfasdfasdfff4",
+             id: "888"
+           }
   end
 
   test "invalid message structs refuse to encode" do

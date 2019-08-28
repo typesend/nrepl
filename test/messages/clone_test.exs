@@ -5,15 +5,13 @@ defmodule NReplTest.Clone do
   doctest NRepl.Messages.Clone
 
   test "encodes correctly", _context do
-    result =
-      NRepl.Message.encode(%Clone{session: "gm7it23uikjknkewz2yg", id: "one"})
+    result = NRepl.Message.encode(%Clone{session: "gm7it23uikjknkewz2yg", id: "one"})
 
     assert result == "d2:id3:one2:op5:clone7:session20:gm7it23uikjknkewz2yge"
   end
 
   test "encodes custom message id when provided", _context do
-    result =
-      NRepl.Message.encode(%Clone{session: "gm7it23uikjknkewz2yg", id: "one"})
+    result = NRepl.Message.encode(%Clone{session: "gm7it23uikjknkewz2yg", id: "one"})
 
     assert result == "d2:id3:one2:op5:clone7:session20:gm7it23uikjknkewz2yge"
   end
@@ -34,7 +32,7 @@ defmodule NReplTest.Clone do
   end
 
   test "required fields" do
-    assert Clone.required == [:session]
+    assert Clone.required() == [:session]
   end
 
   test "id defaults to UUID" do

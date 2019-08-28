@@ -4,7 +4,7 @@ defmodule NReplTest.Describe do
   doctest NRepl.Messages.Describe
 
   test "required fields" do
-    assert Describe.required == []
+    assert Describe.required() == []
   end
 
   test "id defaults to UUID" do
@@ -12,5 +12,4 @@ defmodule NReplTest.Describe do
     {:ok, info} = UUID.info(message.id)
     assert 4 == info[:version]
   end
-
 end

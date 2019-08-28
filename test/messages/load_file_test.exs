@@ -4,7 +4,7 @@ defmodule NReplTest.LoadFile do
   doctest NRepl.Messages.LoadFile
 
   test "required fields" do
-    assert LoadFile.required == [:file]
+    assert LoadFile.required() == [:file]
   end
 
   test "id defaults to UUID" do
@@ -12,5 +12,4 @@ defmodule NReplTest.LoadFile do
     {:ok, info} = UUID.info(message.id)
     assert 4 == info[:version]
   end
-
 end

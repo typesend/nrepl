@@ -17,7 +17,7 @@ defmodule NReplTest.Eval do
   end
 
   test "required fields" do
-    assert Eval.required == [:code, :session]
+    assert Eval.required() == [:code, :session]
   end
 
   test "id defaults to UUID" do
@@ -25,5 +25,4 @@ defmodule NReplTest.Eval do
     {:ok, info} = UUID.info(message.id)
     assert 4 == info[:version]
   end
-
 end

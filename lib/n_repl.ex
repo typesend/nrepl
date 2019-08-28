@@ -4,8 +4,11 @@ defmodule NRepl do
   def encode(%{__struct__: mod} = msg) do
     # Bencode the message
     case B.encode(msg) do
-      {:error, :invalid} -> raise "Invalid message. Required fields: #{Enum.join(mod.required ++ [:op, :id], ", ")}"
-      {:ok, encoded_msg} -> encoded_msg
+      {:error, :invalid} ->
+        raise "Invalid message. Required fields: #{Enum.join(mod.required ++ [:op, :id], ", ")}"
+
+      {:ok, encoded_msg} ->
+        encoded_msg
     end
   end
 
