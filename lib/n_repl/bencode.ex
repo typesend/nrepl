@@ -15,6 +15,9 @@ defmodule NRepl.Bencode do
     end
   end
 
+  @doc """
+  Decodes nREPL replies and normalizes key names. Returns a Map.
+  """
   def decode(string) do
     {:ok, data} = Bento.decode(string)
 

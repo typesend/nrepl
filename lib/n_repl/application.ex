@@ -5,7 +5,7 @@ defmodule NRepl.Application do
 
   def start(_type, _args) do
     children = [
-      # :poolboy.child_spec(:worker, poolboy_config())
+      :poolboy.child_spec(:worker, poolboy_config())
     ]
 
     opts = [strategy: :one_for_one, name: NRepl.Supervisor]

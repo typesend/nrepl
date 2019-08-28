@@ -1,6 +1,6 @@
 defmodule NRepl.Worker do
   use Connection
-  alias Bento, as: B
+  alias NRepl.Bencode, as: B
   import UUID, only: [uuid4: 0]
 
   @default_url "nrepl://127.0.0.1:7700"
