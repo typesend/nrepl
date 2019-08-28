@@ -5,10 +5,10 @@ defmodule NReplTest.Bencode do
 
   test "converting underscores to dashes in keys and values to strings" do
     {:ok, encoded_msg} =
-      Bencode.encode(%NRepl.Messages.Interrupt{message_id: 234_234, session_id: "asdfasdfasdfff4"})
+      Bencode.encode(%NRepl.Messages.Interrupt{message_id: 234_234, session_id: "asdfasdfasdfff4", id: "888"})
 
     assert encoded_msg ==
-             "d2:id36:a4bf8ecf-2f70-4386-a44c-05a9225716bf10:message-id6:2342342:op9:interrupt10:session-id15:asdfasdfasdfff4e"
+             "d2:id3:88810:message-id6:2342342:op9:interrupt10:session-id15:asdfasdfasdfff4e"
   end
 
   test "decoding bencoded data" do

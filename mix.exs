@@ -11,7 +11,9 @@ defmodule NRepl.MixProject do
       description: "An Elixir nREPL client.",
       deps: deps(),
       source_url: url(),
-      homepage_url: url()
+      homepage_url: url(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
     ]
   end
 
@@ -27,6 +29,8 @@ defmodule NRepl.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.10", only: :test},
       {:poolboy, "~> 1.5"},
       {:connection, "~> 1.0"},
       {:bento, "~> 0.9"},
