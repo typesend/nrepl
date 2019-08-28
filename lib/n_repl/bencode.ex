@@ -7,4 +7,10 @@ defmodule Bencode do
     |> Bento.encode()
   end
 
+  def decode(string) do
+    {:ok, data} = Bento.decode(string)
+    data
+    |> Map.new(fn {k,v} -> {String.to_atom(String.replace(k, "-", "_")), v} end)
+  end
+
 end
