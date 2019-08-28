@@ -96,19 +96,27 @@ defmodule NRepl.Worker do
   end
 
   def handle_info({:tcp, _port, data}, state) do
-    decoded_data = case B.decode(data) do
-      {:ok, result} -> result
-      {:error, {:invalid, raw}} ->
-        IO.puts "INVALID RESPONSE DATA: #{raw}"
-        {:invalid, raw}
-    end
+    decoded_data =
+      case B.decode(data) do
+        {:ok, result} ->
+          result
+
+        {:error, {:invalid, raw}} ->
+          IO.puts("INVALID RESPONSE DATA: #{raw}")
+          {:invalid, raw}
+      end
+
     new_state = %{state | responses: state[:responses] ++ [decoded_data]}
+
     case decoded_data do
       %{"status" => ["done"]} ->
         Kernel.send(state[:reply_to], new_state[:responses])
         new_state = %{state | responses: nil, reply_to: nil}
-      _ -> :continue
+
+      _ ->
+        :continue
     end
+
     {:noreply, new_state}
   end
 

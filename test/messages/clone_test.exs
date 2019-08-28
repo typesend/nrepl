@@ -25,5 +25,4 @@ defmodule NReplCloneTest do
   #   result = NRepl.Message.encode message
   #   assert result =~ message.id
   # end
-
 end

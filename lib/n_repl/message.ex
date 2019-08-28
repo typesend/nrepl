@@ -6,7 +6,8 @@ defprotocol NRepl.Message do
   def valid?(msg)
 end
 
-defimpl NRepl.Message, for: [
+defimpl NRepl.Message,
+  for: [
     NRepl.Messages.Clone,
     NRepl.Messages.Close,
     NRepl.Messages.Describe,
@@ -16,7 +17,6 @@ defimpl NRepl.Message, for: [
     NRepl.Messages.LsSessions,
     NRepl.Messages.Stdin
   ] do
-
   @doc "Returns an encoded nREPL message, assigning a message id if not present."
   def encode(msg), do: NRepl.encode(msg)
 
