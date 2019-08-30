@@ -1,10 +1,9 @@
 defmodule NRepl.Connection do
   use Connection
-  alias NRepl.Bencode, as: B
-  import UUID, only: [uuid4: 0]
+  alias NRepl.Bencode
 
   @default_url "nrepl://127.0.0.1:7700"
-  @initial_state %{socket: nil, responses: [], reply_to: nil}
+  @initial_state %{socket: nil, reply_to: nil}
 
   defp nrepl_server_config do
     [host, port] =
@@ -12,37 +11,35 @@ defmodule NRepl.Connection do
       |> Regex.named_captures(System.get_env("NREPL_URL", @default_url))
       |> Map.values()
 
-    {host, String.to_integer(port)}
+    {to_charlist(host), String.to_integer(port)}
   end
 
   def start_link(_) do
     Connection.start_link(__MODULE__, @initial_state)
   end
 
-  def close(nrepl_pid) do
-    IO.inspect(nrepl_pid)
-    Connection.call(nrepl_pid, :close)
-  end
-
-  def send(nrepl_pid, message) do
-    Connection.call(nrepl_pid, {:send, Map.merge(%{id: UUID.uuid4()}, message)})
+  def init(state) do
+    {:connect, nil, state}
   end
 
   def state(nrepl_pid) do
     Connection.call(nrepl_pid, :state)
   end
 
-  def init(state) do
-    {:connect, nil, state}
+  def close(nrepl_pid) do
+    Connection.call(nrepl_pid, :close)
+  end
+
+  def send(nrepl_pid, encoded_message) when is_binary(encoded_message) do
+    Connection.call(nrepl_pid, {:send, encoded_message})
   end
 
   def connect(_info, state) do
     opts = [:binary]
+    {host, port} = nrepl_server_config()
 
-    case :gen_tcp.connect('127.0.0.1', 7700, opts) do
+    case :gen_tcp.connect(host, port, opts) do
       {:ok, socket} ->
-        # IO.puts("Connected")
-        # IO.inspect(self())
         {:ok, %{state | socket: socket}}
 
       {:error, reason} ->
@@ -70,18 +67,10 @@ defmodule NRepl.Connection do
   end
 
   def handle_call(:close, from, state) do
-    # IO.inspect(self())
     {:disconnect, {:close, from}, state}
   end
 
-  def handle_info({:tcp_closed, port}, state) do
-    # IO.puts("TCP connection #{inspect(port)} closed by server")
-    {:connect, nil, %{state | socket: nil}}
-  end
-
-  def handle_call({:send, message}, {from, _ref}, %{socket: socket} = state) do
-    {:ok, encoded_msg} = B.encode(message)
-
+  def handle_call({:send, encoded_msg}, {from, _ref}, %{socket: socket} = state) do
     case :gen_tcp.send(socket, encoded_msg) do
       :ok ->
         {:reply, :ok, %{state | reply_to: from}}
@@ -95,36 +84,10 @@ defmodule NRepl.Connection do
     {:reply, {:ok, state}, state}
   end
 
-  def handle_info({:tcp, _port, data}, state) do
-    decoded_data =
-      case B.decode(data) do
-        {:ok, result} ->
-          result
-
-        {:error, {:invalid, raw}} ->
-          IO.puts("INVALID RESPONSE DATA: #{raw}")
-          {:invalid, raw}
-      end
-
-    new_state = %{state | responses: state[:responses] ++ [decoded_data]}
-
-    case decoded_data do
-      %{"status" => ["done"]} ->
-        Kernel.send(state[:reply_to], new_state[:responses])
-        new_state = %{state | responses: nil, reply_to: nil}
-
-      _ ->
-        :continue
-    end
-
-    {:noreply, new_state}
-  end
-
   def handle_call({:recv, bytes, timeout}, _, %{socket: socket} = state) do
     case :gen_tcp.recv(socket, bytes, timeout) do
-      {:ok, data} ->
-        {:ok, decoded_data} = B.decode(data)
-        {:reply, {:ok, decoded_data}, state}
+      {:ok, _data} ->
+        {:reply, :ok, state}
 
       {:error, :timeout} = timeout ->
         {:reply, timeout, state}
@@ -133,4 +96,15 @@ defmodule NRepl.Connection do
         {:disconnect, error, error, state}
     end
   end
+
+  def handle_info({:tcp, _port, data}, state) do
+    Kernel.send(state[:reply_to], Bencode.decode(data))
+    {:noreply, state}
+  end
+
+  def handle_info({:tcp_closed, port}, state) do
+    IO.puts("TCP connection #{inspect(port)} closed by server")
+    {:connect, nil, %{state | socket: nil}}
+  end
+
 end

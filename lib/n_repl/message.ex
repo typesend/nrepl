@@ -4,6 +4,9 @@ defprotocol NRepl.Message do
 
   @doc "Returns true if the message is valid."
   def valid?(msg)
+
+  @doc "Sends encoded nREPL message to one of the pooled connections."
+  def send(msg)
 end
 
 defimpl NRepl.Message,
@@ -22,4 +25,7 @@ defimpl NRepl.Message,
 
   @doc "Returns true if the message is valid."
   def valid?(msg), do: NRepl.validate(msg)
+
+  @doc "Sends encoded nREPL message to one of the pooled connections."
+  def send(msg), do: NRepl.send(msg)
 end

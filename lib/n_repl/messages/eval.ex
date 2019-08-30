@@ -30,5 +30,5 @@ defmodule NRepl.Messages.Eval do
             # If logical true, the result of printing each value will be streamed to the client over one or more messages.
             "nrepl.middleware.print/stream?": nil
 
-  def required(), do: [:code, :session]
+  def required(), do: [:code]
 end
