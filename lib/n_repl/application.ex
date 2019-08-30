@@ -15,7 +15,7 @@ defmodule NRepl.Application do
   defp poolboy_config do
     [
       {:name, {:local, :worker}},
-      {:worker_module, NRepl.Worker},
+      {:worker_module, NRepl.Connection},
       {:size, 1},
       {:max_overflow, 1}
     ]

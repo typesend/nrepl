@@ -1,4 +1,4 @@
-defmodule NRepl.Worker do
+defmodule NRepl.Connection do
   use Connection
   alias NRepl.Bencode, as: B
   import UUID, only: [uuid4: 0]
