@@ -1,7 +1,7 @@
 defmodule NRepl do
   alias NRepl.Bencode, as: B
 
-  @timeout 500
+  @timeout 333
 
   def encode(%{__struct__: mod} = msg) do
     # Bencode the message
@@ -21,13 +21,15 @@ defmodule NRepl do
     |> Enum.all?(fn v -> v != nil && v != "" end)
   end
 
-  def send(%{__struct__: mod} = msg) do
+  def send(%{__struct__: _mod} = msg) do
     encoded_msg = encode(msg)
 
-    :poolboy.transaction(
+    txn = :poolboy.transaction(
       :worker,
       fn pid -> NRepl.Connection.send(pid, encoded_msg) end,
       @timeout
     )
+
+    {txn, msg.id}
   end
 end
