@@ -17,7 +17,7 @@ defmodule NReplTest.Eval do
   end
 
   test "required fields" do
-    assert Eval.required() == [:code, :session]
+    assert Eval.required() == [:code]
   end
 
   test "id defaults to UUID" do

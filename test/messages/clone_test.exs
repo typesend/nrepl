@@ -19,10 +19,8 @@ defmodule NReplTest.Clone do
   test "removes invalid session ids", _context do
     a = %Clone{session: "", id: "wombat"}
     b = %Clone{session: nil, id: "kitten"}
-    assert {:error, :invalid} == Bencode.encode(a)
-    assert_raise RuntimeError, fn -> NRepl.Message.encode(a) end
-    assert {:error, :invalid} == Bencode.encode(b)
-    assert_raise RuntimeError, fn -> NRepl.Message.encode(b) end
+    assert {:ok, "d2:id6:wombat2:op5:clonee"} == Bencode.encode(a)
+    assert {:ok, "d2:id6:kitten2:op5:clonee"} == Bencode.encode(b)
   end
 
   test "message id generated", _context do
@@ -32,7 +30,7 @@ defmodule NReplTest.Clone do
   end
 
   test "required fields" do
-    assert Clone.required() == [:session]
+    assert Clone.required() == []
   end
 
   test "id defaults to UUID" do
