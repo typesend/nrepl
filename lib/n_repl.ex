@@ -24,11 +24,12 @@ defmodule NRepl do
   def send(%{__struct__: _mod} = msg) do
     encoded_msg = encode(msg)
 
-    txn = :poolboy.transaction(
-      :worker,
-      fn pid -> NRepl.Connection.send(pid, encoded_msg) end,
-      @timeout
-    )
+    txn =
+      :poolboy.transaction(
+        :worker,
+        fn pid -> NRepl.Connection.send(pid, encoded_msg) end,
+        @timeout
+      )
 
     {txn, msg.id}
   end

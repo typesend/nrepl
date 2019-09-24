@@ -106,5 +106,4 @@ defmodule NRepl.Connection do
     IO.puts("TCP connection #{inspect(port)} closed by server")
     {:connect, nil, %{state | socket: nil}}
   end
-
 end
