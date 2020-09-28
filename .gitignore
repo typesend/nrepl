@@ -23,3 +23,8 @@ erl_crash.dump
 nrepl-*.tar
 
 /ttb_last_config
+
+.calva
+.cpcache
+.nrepl-port
+deps.edn

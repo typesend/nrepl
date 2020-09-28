@@ -2,7 +2,7 @@ defmodule NRepl.Connection do
   use Connection
   alias NRepl.Bencode
 
-  @default_url "nrepl://127.0.0.1:7700"
+  @default_url "nrepl://127.0.0.1:" <> File.read!(".nrepl-port")
   @initial_state %{socket: nil, reply_to: nil}
 
   defp nrepl_server_config do
